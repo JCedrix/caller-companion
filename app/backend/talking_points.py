@@ -76,11 +76,20 @@ def _translate_feature(feature: str, value, direction: int):
 
 
 def generate_talking_points(row: pd.Series, contribs_row: pd.Series, band: str, k: int = 3) -> list[str]:
-    sorted_features = contribs_row.abs().sort_values(ascending=False).index.tolist()
     points: list[str] = []
+
+    poutcome_value = row["poutcome"]
+    if poutcome_value in ("success", "failure"):
+        forced = _translate_feature("poutcome", poutcome_value, 1)
+        if forced:
+            points.append(forced)
+
+    sorted_features = contribs_row.abs().sort_values(ascending=False).index.tolist()
     for feat in sorted_features:
         if len(points) >= k:
             break
+        if feat == "poutcome":
+            continue
         contrib = contribs_row[feat]
         direction = 1 if contrib > 0 else -1
         sentence = _translate_feature(feat, row[feat], direction)
