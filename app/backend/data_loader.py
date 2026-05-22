@@ -7,6 +7,7 @@ from pathlib import Path
 import joblib
 import pandas as pd
 import requests
+from pandas.api.types import CategoricalDtype
 from sklearn.model_selection import train_test_split
 
 from state import AppState
@@ -78,6 +79,8 @@ def load_all(state: AppState) -> None:
             f"{len(pred_idx ^ test_idx)} mismatched indices"
         )
 
+    _precompute_contributions(state)
+
     state.loaded = True
 
     metrics = state.metadata["test_metrics"]
@@ -90,4 +93,24 @@ def load_all(state: AppState) -> None:
         f"[startup] {len(state.X_test)} test rows, "
         f"{len(state.predictions)} predictions, "
         f"{len(state.metadata['feature_names'])} features. OK."
+    )
+    _log(
+        f"[startup] Pre-computed contributions: "
+        f"{state.contributions.shape[0]} rows x {state.contributions.shape[1]} features."
+    )
+
+
+def _precompute_contributions(state: AppState) -> None:
+    feature_names = state.metadata["feature_names"]
+    cat_features = state.metadata["categorical_features"]
+    X = state.X_test[feature_names].copy()
+    training_cats = state.model.booster_.pandas_categorical
+    for col, cats in zip(cat_features, training_cats):
+        X[col] = X[col].astype(CategoricalDtype(categories=cats))
+
+    contribs = state.model.booster_.predict(X, pred_contrib=True)
+    state.contributions = pd.DataFrame(
+        contribs[:, :-1],
+        index=state.X_test.index,
+        columns=feature_names,
     )
