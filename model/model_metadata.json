@@ -1,0 +1,74 @@
+{
+  "model_type": "LightGBM",
+  "n_estimators": 500,
+  "random_state": 42,
+  "thresholds": {
+    "high_confidence": 0.65,
+    "medium_confidence": 0.3
+  },
+  "test_metrics": {
+    "roc_auc": 0.8008307437850842,
+    "pr_auc": 0.4839883626412447,
+    "brier_score": 0.13122229465417834
+  },
+  "baseline_metrics": {
+    "roc_auc": 0.8007913846171989,
+    "pr_auc": 0.46012400612448157,
+    "brier_score": 0.16162810491583873
+  },
+  "feature_names": [
+    "age",
+    "job",
+    "marital",
+    "education",
+    "default",
+    "housing",
+    "loan",
+    "contact",
+    "month",
+    "day_of_week",
+    "campaign",
+    "pdays",
+    "previous",
+    "poutcome",
+    "emp.var.rate",
+    "cons.price.idx",
+    "cons.conf.idx",
+    "euribor3m",
+    "nr.employed"
+  ],
+  "categorical_features": [
+    "job",
+    "marital",
+    "education",
+    "default",
+    "housing",
+    "loan",
+    "contact",
+    "month",
+    "day_of_week",
+    "poutcome"
+  ],
+  "numeric_features": [
+    "age",
+    "campaign",
+    "pdays",
+    "previous",
+    "emp.var.rate",
+    "cons.price.idx",
+    "cons.conf.idx",
+    "euribor3m",
+    "nr.employed"
+  ],
+  "class_distribution": {
+    "positive_rate": 0.11265417111780131,
+    "train_size": 32950,
+    "test_size": 8238
+  },
+  "dropped_features": [
+    "duration"
+  ],
+  "drop_reasons": {
+    "duration": "post-call leakage, only known after call ends"
+  }
+}
