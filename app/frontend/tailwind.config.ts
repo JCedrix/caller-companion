@@ -16,6 +16,10 @@ const config: Config = {
           bright: "#ff7a6a",
           tint: "rgba(255, 91, 74, 0.12)",
         },
+        amber: {
+          DEFAULT: "#f59e0b",
+          tint: "rgba(245, 158, 11, 0.12)",
+        },
         "text-primary": "rgba(255, 255, 255, 0.95)",
         "text-secondary": "rgba(255, 255, 255, 0.6)",
         "text-muted": "rgba(255, 255, 255, 0.45)",
@@ -33,6 +37,15 @@ const config: Config = {
       },
       maxWidth: {
         content: "1200px",
+      },
+      keyframes: {
+        "fade-in": {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+      },
+      animation: {
+        "fade-in": "fade-in 200ms cubic-bezier(0.16, 1, 0.3, 1)",
       },
     },
   },
