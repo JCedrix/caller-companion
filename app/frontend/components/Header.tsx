@@ -1,17 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
-const CALLER_KEY = "cc_caller_id";
+import { getCallerById } from "@/lib/callers";
+import { useIdentity } from "./IdentityProvider";
 
 export function Header() {
-  const [caller, setCaller] = useState<string | null>(null);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    setCaller(localStorage.getItem(CALLER_KEY));
-  }, []);
+  const { callerId, mounted, setCaller } = useIdentity();
+  const caller = getCallerById(callerId);
 
   return (
     <header className="border-b border-card-border">
@@ -19,13 +13,27 @@ export function Header() {
         <div className="text-base font-semibold tracking-tight">
           Caller Companion
         </div>
-        <div className="text-sm">
-          {!mounted ? null : caller ? (
-            <span className="text-text-secondary">
-              <span className="text-text-muted">caller: </span>
-              <span className="text-text-primary capitalize">{caller}</span>
-            </span>
-          ) : (
+        <div
+          className={`text-sm transition-opacity duration-200 ease-cc ${
+            mounted ? "opacity-100" : "opacity-0"
+          }`}
+        >
+          {mounted && caller && (
+            <div className="flex items-center gap-3">
+              <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-indigo-tint text-indigo font-semibold text-xs">
+                {caller.initials}
+              </span>
+              <span className="text-text-primary">{caller.name}</span>
+              <button
+                type="button"
+                onClick={() => setCaller(null)}
+                className="text-text-muted hover:text-indigo transition-colors duration-200 ease-cc text-xs"
+              >
+                switch
+              </button>
+            </div>
+          )}
+          {mounted && !caller && (
             <span className="text-text-muted">no caller selected</span>
           )}
         </div>
