@@ -216,3 +216,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Frontend (Next.js at app/frontend) — override Python-template lib/ rule
+!/app/frontend/lib/
+!/app/frontend/lib/**
