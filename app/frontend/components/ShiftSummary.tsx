@@ -41,7 +41,7 @@ function accuracyColor(pct: number): string {
 }
 
 export function ShiftSummary() {
-  const { callerId, resumeShift, endShift } = useIdentity();
+  const { callerId, resumeShift, endShift, openShiftHistory } = useIdentity();
   const [outcomes, setOutcomes] = useState<SessionOutcome[]>([]);
 
   useEffect(() => {
@@ -148,6 +148,16 @@ export function ShiftSummary() {
             className="bg-indigo hover:bg-indigo-bright text-white font-medium text-sm px-6 py-3 rounded-lg transition-colors duration-200 ease-cc"
           >
             End shift
+          </button>
+        </div>
+
+        <div className="mt-5">
+          <button
+            type="button"
+            onClick={openShiftHistory}
+            className="text-text-muted hover:text-indigo transition-colors duration-200 ease-cc text-xs"
+          >
+            View past shifts
           </button>
         </div>
       </div>

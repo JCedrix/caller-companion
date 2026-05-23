@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import { CALLER_KEY } from "@/lib/callers";
-import { clearOutcomes } from "@/lib/session";
+import { archiveCurrentShift } from "@/lib/session";
 
 interface IdentityContextValue {
   callerId: string | null;
@@ -20,6 +20,9 @@ interface IdentityContextValue {
   openShiftSummary: () => void;
   resumeShift: () => void;
   endShift: () => void;
+  inShiftHistory: boolean;
+  openShiftHistory: () => void;
+  closeShiftHistory: () => void;
 }
 
 const IdentityContext = createContext<IdentityContextValue | null>(null);
@@ -29,6 +32,7 @@ export function IdentityProvider({ children }: { children: ReactNode }) {
   const [mounted, setMounted] = useState(false);
   const [splashDismissed, setSplashDismissed] = useState(false);
   const [inShiftSummary, setInShiftSummary] = useState(false);
+  const [inShiftHistory, setInShiftHistory] = useState(false);
 
   useEffect(() => {
     setCallerId(localStorage.getItem(CALLER_KEY));
@@ -47,12 +51,15 @@ export function IdentityProvider({ children }: { children: ReactNode }) {
   const dismissSplash = () => setSplashDismissed(true);
   const openShiftSummary = () => setInShiftSummary(true);
   const resumeShift = () => setInShiftSummary(false);
+  const openShiftHistory = () => setInShiftHistory(true);
+  const closeShiftHistory = () => setInShiftHistory(false);
 
   const endShift = () => {
     const id = callerId;
-    if (id) clearOutcomes(id);
+    if (id) archiveCurrentShift(id);
     setCaller(null);
     setInShiftSummary(false);
+    setInShiftHistory(false);
     setSplashDismissed(false);
   };
 
@@ -68,6 +75,9 @@ export function IdentityProvider({ children }: { children: ReactNode }) {
         openShiftSummary,
         resumeShift,
         endShift,
+        inShiftHistory,
+        openShiftHistory,
+        closeShiftHistory,
       }}
     >
       {children}
