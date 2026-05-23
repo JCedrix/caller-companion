@@ -35,16 +35,16 @@ export function Header() {
               <button
                 type="button"
                 onClick={() => setCaller(null)}
-                className="text-text-muted hover:text-indigo transition-colors duration-200 ease-cc text-xs"
+                className="border border-card-border bg-card hover:border-indigo-bright text-text-secondary hover:text-text-primary transition-all duration-200 ease-cc text-xs px-3 py-1.5 rounded-md"
               >
-                switch
+                Switch
               </button>
               <button
                 type="button"
                 onClick={openShiftSummary}
-                className="text-text-muted hover:text-negative transition-colors duration-200 ease-cc text-xs"
+                className="border border-card-border bg-card hover:border-negative hover:bg-negative-tint text-text-secondary hover:text-negative transition-all duration-200 ease-cc text-xs px-3 py-1.5 rounded-md"
               >
-                end shift
+                End shift
               </button>
             </div>
           ) : (

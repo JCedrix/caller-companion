@@ -129,3 +129,19 @@ export function getPastShifts(callerId: string): CompletedShift[] {
   if (!session) return [];
   return [...session.past].reverse();
 }
+
+export interface AggregatedShift {
+  caller_id: string;
+  shift: CompletedShift;
+}
+
+export function getAllPastShifts(): AggregatedShift[] {
+  const store = read();
+  const all: AggregatedShift[] = [];
+  for (const [caller_id, session] of Object.entries(store)) {
+    for (const shift of session.past) {
+      all.push({ caller_id, shift });
+    }
+  }
+  return all.sort((a, b) => b.shift.id.localeCompare(a.shift.id));
+}

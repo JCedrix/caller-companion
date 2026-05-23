@@ -3,7 +3,12 @@
 import { useEffect, useState } from "react";
 import type { OutcomeKind } from "@/lib/api";
 import { getCallerById } from "@/lib/callers";
-import { getPastShifts, type CompletedShift } from "@/lib/session";
+import {
+  getAllPastShifts,
+  getPastShifts,
+  type AggregatedShift,
+  type CompletedShift,
+} from "@/lib/session";
 import { BlobBackground } from "./BlobBackground";
 import { useIdentity } from "./IdentityProvider";
 
@@ -62,7 +67,13 @@ function formatDuration(startedAt: string, endedAt: string): string {
   return `${h}h ${m}m`;
 }
 
-function PastShiftCard({ shift }: { shift: CompletedShift }) {
+function PastShiftCard({
+  shift,
+  callerIdForChip,
+}: {
+  shift: CompletedShift;
+  callerIdForChip?: string;
+}) {
   const [expanded, setExpanded] = useState(false);
 
   const counts = ALL_OUTCOMES.reduce(
@@ -74,14 +85,24 @@ function PastShiftCard({ shift }: { shift: CompletedShift }) {
   );
 
   const visibleBreakdown = ALL_OUTCOMES.filter((k) => counts[k] > 0);
+  const chipCaller = callerIdForChip
+    ? getCallerById(callerIdForChip)
+    : null;
 
   return (
     <div className="rounded-2xl border border-card-border bg-card p-6">
-      <div className="flex items-baseline justify-between mb-5">
-        <div className="text-text-primary text-sm tabular-nums">
-          {formatDate(shift.id)}
+      <div className="flex items-baseline justify-between mb-5 gap-4">
+        <div className="flex items-baseline gap-3 min-w-0">
+          {chipCaller && (
+            <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-indigo-tint text-indigo font-semibold text-[10px] shrink-0">
+              {chipCaller.initials}
+            </span>
+          )}
+          <div className="text-text-primary text-sm tabular-nums truncate">
+            {formatDate(shift.id)}
+          </div>
         </div>
-        <div className="text-text-muted text-xs tabular-nums">
+        <div className="text-text-muted text-xs tabular-nums shrink-0">
           {formatDuration(shift.started_at, shift.ended_at)}
         </div>
       </div>
@@ -143,13 +164,27 @@ function PastShiftCard({ shift }: { shift: CompletedShift }) {
 
 export function ShiftHistory() {
   const { callerId, closeShiftHistory } = useIdentity();
-  const [shifts, setShifts] = useState<CompletedShift[]>([]);
+  const [singleShifts, setSingleShifts] = useState<CompletedShift[]>([]);
+  const [aggregatedShifts, setAggregatedShifts] = useState<AggregatedShift[]>(
+    [],
+  );
 
   useEffect(() => {
-    if (callerId) setShifts(getPastShifts(callerId));
+    if (callerId) {
+      setSingleShifts(getPastShifts(callerId));
+      setAggregatedShifts([]);
+    } else {
+      setSingleShifts([]);
+      setAggregatedShifts(getAllPastShifts());
+    }
   }, [callerId]);
 
   const caller = getCallerById(callerId);
+  const aggregated = !callerId;
+  const empty = aggregated
+    ? aggregatedShifts.length === 0
+    : singleShifts.length === 0;
+  const backLabel = aggregated ? "Back to picker" : "Back to summary";
 
   return (
     <BlobBackground>
@@ -163,19 +198,31 @@ export function ShiftHistory() {
               <span className="text-text-primary text-base">{caller.name}</span>
             </div>
           )}
-          <h1 className="display-heading text-4xl md:text-5xl">Past shifts</h1>
+          <h1 className="display-heading text-4xl md:text-5xl">
+            {aggregated ? "All past shifts" : "Past shifts"}
+          </h1>
         </div>
 
-        {shifts.length === 0 ? (
+        {empty ? (
           <div className="rounded-3xl border border-card-border bg-card p-10 text-center">
             <p className="text-text-secondary text-sm">
               No completed shifts yet. End your current shift to start building
               history.
             </p>
           </div>
+        ) : aggregated ? (
+          <div className="space-y-4">
+            {aggregatedShifts.map(({ caller_id, shift }) => (
+              <PastShiftCard
+                key={`${caller_id}-${shift.id}`}
+                shift={shift}
+                callerIdForChip={caller_id}
+              />
+            ))}
+          </div>
         ) : (
           <div className="space-y-4">
-            {shifts.map((shift) => (
+            {singleShifts.map((shift) => (
               <PastShiftCard key={shift.id} shift={shift} />
             ))}
           </div>
@@ -187,7 +234,7 @@ export function ShiftHistory() {
             onClick={closeShiftHistory}
             className="border border-card-border bg-transparent hover:border-indigo-bright text-text-primary text-sm px-6 py-3 rounded-lg transition-all duration-200 ease-cc"
           >
-            Back to summary
+            {backLabel}
           </button>
         </div>
       </div>

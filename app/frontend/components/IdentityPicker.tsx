@@ -4,7 +4,7 @@ import { CALLERS } from "@/lib/callers";
 import { useIdentity } from "./IdentityProvider";
 
 export function IdentityPicker() {
-  const { setCaller } = useIdentity();
+  const { setCaller, openShiftHistory } = useIdentity();
 
   return (
     <div className="min-h-[60vh] flex flex-col items-center justify-center">
@@ -30,6 +30,15 @@ export function IdentityPicker() {
             <span className="text-base font-medium">{c.name}</span>
           </button>
         ))}
+      </div>
+      <div className="mt-10">
+        <button
+          type="button"
+          onClick={openShiftHistory}
+          className="border border-card-border bg-transparent hover:border-indigo-bright text-text-secondary hover:text-text-primary text-sm px-6 py-3 rounded-lg transition-all duration-200 ease-cc"
+        >
+          View past shifts
+        </button>
       </div>
     </div>
   );
