@@ -72,7 +72,7 @@ function PastShiftCard({
   callerIdForChip,
 }: {
   shift: CompletedShift;
-  callerIdForChip?: string;
+  callerIdForChip: string;
 }) {
   const [expanded, setExpanded] = useState(false);
 
@@ -85,24 +85,27 @@ function PastShiftCard({
   );
 
   const visibleBreakdown = ALL_OUTCOMES.filter((k) => counts[k] > 0);
-  const chipCaller = callerIdForChip
-    ? getCallerById(callerIdForChip)
-    : null;
+  const chipCaller = getCallerById(callerIdForChip);
 
   return (
     <div className="rounded-2xl border border-card-border bg-card p-6">
-      <div className="flex items-baseline justify-between mb-5 gap-4">
-        <div className="flex items-baseline gap-3 min-w-0">
+      <div className="flex items-start justify-between mb-5 gap-4">
+        <div className="flex items-center gap-3 min-w-0">
           {chipCaller && (
-            <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-indigo-tint text-indigo font-semibold text-[10px] shrink-0">
+            <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-indigo-tint text-indigo font-semibold text-[11px] shrink-0">
               {chipCaller.initials}
             </span>
           )}
-          <div className="text-text-primary text-sm tabular-nums truncate">
-            {formatDate(shift.id)}
+          <div className="min-w-0">
+            <div className="text-text-primary text-sm font-medium truncate">
+              {chipCaller?.name ?? "Unknown caller"}
+            </div>
+            <div className="text-text-muted text-xs tabular-nums truncate">
+              {formatDate(shift.id)}
+            </div>
           </div>
         </div>
-        <div className="text-text-muted text-xs tabular-nums shrink-0">
+        <div className="text-text-muted text-xs tabular-nums shrink-0 pt-1">
           {formatDuration(shift.started_at, shift.ended_at)}
         </div>
       </div>
@@ -179,7 +182,6 @@ export function ShiftHistory() {
     }
   }, [callerId]);
 
-  const caller = getCallerById(callerId);
   const aggregated = !callerId;
   const empty = aggregated
     ? aggregatedShifts.length === 0
@@ -190,14 +192,6 @@ export function ShiftHistory() {
     <BlobBackground>
       <div className="w-full max-w-2xl">
         <div className="text-center mb-10">
-          {caller && (
-            <div className="flex items-center justify-center gap-3 mb-6">
-              <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-indigo-tint text-indigo font-semibold text-sm">
-                {caller.initials}
-              </span>
-              <span className="text-text-primary text-base">{caller.name}</span>
-            </div>
-          )}
           <h1 className="display-heading text-4xl md:text-5xl">
             {aggregated ? "All past shifts" : "Past shifts"}
           </h1>
@@ -223,7 +217,11 @@ export function ShiftHistory() {
         ) : (
           <div className="space-y-4">
             {singleShifts.map((shift) => (
-              <PastShiftCard key={shift.id} shift={shift} />
+              <PastShiftCard
+                key={shift.id}
+                shift={shift}
+                callerIdForChip={callerId!}
+              />
             ))}
           </div>
         )}

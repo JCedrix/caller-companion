@@ -27,13 +27,13 @@ export function RevealCard({
   agentOutcome,
   stats,
   onNext,
-  onDone,
+  onEndShift,
 }: {
   outcome: OutcomeResponse;
   agentOutcome: OutcomeKind;
   stats: SessionOutcome[];
   onNext: () => void;
-  onDone: () => void;
+  onEndShift: () => void;
 }) {
   const wasRight = outcome.model_was_right;
   const headlineColor = wasRight ? "text-indigo" : "text-amber";
@@ -101,7 +101,7 @@ export function RevealCard({
           </div>
         </div>
 
-        <div className="mt-14 flex items-center justify-center gap-6">
+        <div className="mt-14 flex items-center justify-center gap-4">
           <button
             type="button"
             onClick={onNext}
@@ -111,10 +111,10 @@ export function RevealCard({
           </button>
           <button
             type="button"
-            onClick={onDone}
-            className="text-text-muted hover:text-indigo transition-colors duration-200 ease-cc text-xs"
+            onClick={onEndShift}
+            className="border border-card-border bg-transparent hover:border-negative hover:text-negative text-text-secondary text-sm px-6 py-3 rounded-lg transition-all duration-200 ease-cc"
           >
-            Done for now
+            End shift
           </button>
         </div>
       </div>

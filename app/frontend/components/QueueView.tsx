@@ -29,7 +29,7 @@ function sortByProbDesc(customers: Customer[]): Customer[] {
 }
 
 export function QueueView() {
-  const { callerId } = useIdentity();
+  const { callerId, openShiftSummary } = useIdentity();
   const [customers, setCustomers] = useState<Customer[] | null>(null);
   const [featuredIdx, setFeaturedIdx] = useState(0);
   const [error, setError] = useState<string | null>(null);
@@ -93,19 +93,6 @@ export function QueueView() {
     }
   };
 
-  const handleDoneForNow = () => {
-    if (customers && lastOutcome) {
-      const filtered = customers.filter(
-        (c) => c.customer_index !== lastOutcome.customer_index,
-      );
-      setCustomers(filtered);
-      setFeaturedIdx(0);
-    }
-    setLastOutcome(null);
-    setLastAgentOutcome(null);
-    setCallState("queue");
-  };
-
   if (error) {
     return (
       <div className="rounded-2xl border border-card-border bg-card p-8">
@@ -134,7 +121,7 @@ export function QueueView() {
         agentOutcome={lastAgentOutcome}
         stats={sessionOutcomes}
         onNext={handleNextCustomer}
-        onDone={handleDoneForNow}
+        onEndShift={openShiftSummary}
       />
     );
   }
