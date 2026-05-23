@@ -19,14 +19,20 @@ def _log(msg: str) -> None:
 BACKEND_DIR = Path(__file__).parent
 PROJECT_ROOT = BACKEND_DIR.parent.parent
 MODEL_DIR = PROJECT_ROOT / "model"
+DATA_DIR = BACKEND_DIR / "data"
 CACHE_DIR = BACKEND_DIR / ".cache"
 
 UCI_URL = "https://archive.ics.uci.edu/ml/machine-learning-databases/00222/bank-additional.zip"
 UCI_CSV_NAME = "bank-additional/bank-additional-full.csv"
+BUNDLED_CSV = DATA_DIR / "bank-additional-full.csv"
 CACHED_CSV = CACHE_DIR / "bank-additional-full.csv"
 
 
 def _download_uci_dataset() -> pd.DataFrame:
+    if BUNDLED_CSV.exists():
+        _log(f"[startup] Loading UCI dataset from bundled: {BUNDLED_CSV}")
+        return pd.read_csv(BUNDLED_CSV, sep=";")
+
     CACHE_DIR.mkdir(exist_ok=True)
     if CACHED_CSV.exists():
         _log(f"[startup] Loading UCI dataset from cache: {CACHED_CSV}")
