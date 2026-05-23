@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { ConfidenceBand, Customer, CustomerProfile } from "@/lib/api";
 import { ConfidenceBadge } from "./ConfidenceBadge";
 
@@ -59,7 +60,13 @@ function ProfileValue({
   return <span>{String(value)}</span>;
 }
 
-export function HeroCard({ customer }: { customer: Customer }) {
+export function HeroCard({
+  customer,
+  action,
+}: {
+  customer: Customer;
+  action: ReactNode;
+}) {
   const band = customer.prediction.confidence_band;
 
   return (
@@ -118,15 +125,7 @@ export function HeroCard({ customer }: { customer: Customer }) {
         </div>
       </div>
 
-      <div className="flex justify-end mt-10">
-        <button
-          type="button"
-          onClick={() => {}}
-          className="bg-indigo hover:bg-indigo-bright transition-colors duration-200 ease-cc text-white font-medium text-sm px-6 py-3 rounded-lg"
-        >
-          Start call →
-        </button>
-      </div>
+      <div className="mt-10">{action}</div>
     </div>
   );
 }
