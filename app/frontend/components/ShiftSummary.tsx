@@ -75,7 +75,7 @@ export function ShiftSummary() {
           </div>
         )}
 
-        <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
+        <h1 className="display-heading text-4xl md:text-5xl">
           Shift summary
         </h1>
 

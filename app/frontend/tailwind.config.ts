@@ -39,6 +39,7 @@ const config: Config = {
       },
       fontFamily: {
         sans: ["var(--font-inter)", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "system-ui", "sans-serif"],
       },
       transitionTimingFunction: {
         cc: "cubic-bezier(0.16, 1, 0.3, 1)",
