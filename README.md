@@ -14,7 +14,7 @@ A pre-call briefing tool for outbound sales agents. The model writes the brief. 
 
 </div>
 
----
+***
 
 ## The problem
 
@@ -29,9 +29,11 @@ Before every dial, the agent sees a one-screen brief:
 - 📊 A **calibrated subscription probability** based on historical conversion patterns
 - 🎯 A **confidence band** (high, medium, low) so the agent knows how much to trust the number
 - 💬 **Two to three talking points** translated from the model's reasoning into agent-readable language
-- 👤 The customer's **profile** — age, occupation, prior campaign history, contact preferences
+- 👤 The customer's **profile** including age, occupation, prior campaign history, contact preferences
 
 The agent reads the brief, makes the call, logs the outcome. The app shows them whether the model was right. Over a shift, agents calibrate their own instincts against the model's predictions and learn where to trust it and where to override it.
+
+Each rep also has their own **session history**: every completed shift is logged with date, calls made, model accuracy, and outcome breakdown. The pattern scales to teams. Same UI, different rep, separate history.
 
 ## Who it's for
 
@@ -48,13 +50,13 @@ Most ML sales tools fall into one of two traps. They either replace the human (a
 - ✅ **No auto-dialer.** The agent decides who to call, when to call, and what to say. The tool briefs, doesn't dial.
 - ✅ **No black box.** The brief surfaces *why* the model is confident, not just *that* it is. Top features become talking points.
 - ✅ **No false certainty.** Predictions are explicitly bucketed. Low-confidence customers tell the agent "the model doesn't know, trust your read."
-- ✅ **No leakage.** The model was built on features known *before* the call. Predictive features only available after the call (like call duration) were dropped from training — they'd inflate metrics and produce a model that can't help an agent picking up the phone.
+- ✅ **No leakage.** The model was built on features known *before* the call. Predictive features only available after the call (like call duration) were dropped from training. Including them would inflate metrics and produce a model that can't help an agent picking up the phone.
 
----
+***
 
 ## The model
 
-A LightGBM gradient-boosted classifier trained on the [UCI Bank Marketing dataset](https://archive.ics.uci.edu/dataset/222/bank+marketing) — 41,188 customer records from a Portuguese bank's term deposit campaigns. The dataset is publicly available and well-documented, making the model and its limitations easy to verify and audit.
+A LightGBM gradient-boosted classifier trained on the [UCI Bank Marketing dataset](https://archive.ics.uci.edu/dataset/222/bank+marketing). 41,188 customer records from a Portuguese bank's term deposit campaigns. The dataset is publicly available and well-documented, making the model and its limitations easy to verify and audit.
 
 ### Performance on the held-out test set
 
@@ -73,10 +75,10 @@ Three tiers are applied to the calibrated probability:
 | Tier | Threshold | % of customers | Agent guidance |
 |------|-----------|:--------------:|----------------|
 | 🟢 High | ≥ 0.65 | 12.9% | Strong likelihood of conversion. Lean in. |
-| 🟡 Medium | 0.30 – 0.65 | 26.7% | Some positive signal. Read the brief, use judgment. |
+| 🟡 Medium | 0.30 to 0.65 | 26.7% | Some positive signal. Read the brief, use judgment. |
 | ⚪ Low | < 0.30 | 60.4% | Model is uncertain. Trust your instincts. |
 
----
+***
 
 ## Architecture
 
@@ -95,11 +97,11 @@ Three tiers are applied to the calibrated probability:
 
 **Backend.** FastAPI loads the trained model on startup and pre-computes per-row SHAP-like feature contributions for the entire test set. Queue requests are constant-time. Three endpoints: customer queue, customer detail, outcome submission.
 
-**Frontend.** Next.js 14 with TypeScript and Tailwind. Identity persistence in localStorage. State machine: identity picker → queue → active customer → outcome → reveal → next.
+**Frontend.** Next.js 14 with TypeScript and Tailwind. Identity persistence in localStorage. State machine: identity picker, queue, active customer, outcome, reveal, next.
 
-**Talking points translator.** A Python module that ranks each customer's feature contributions by magnitude, then translates the top 2-3 into agent-readable sentences. A hard override surfaces `poutcome` (previous campaign outcome) whenever it's `success` or `failure`, regardless of contribution rank — the agent always knows when they're calling a returning customer.
+**Talking points translator.** A Python module that ranks each customer's feature contributions by magnitude, then translates the top 2-3 into agent-readable sentences. A hard override surfaces `poutcome` (previous campaign outcome) whenever it's `success` or `failure`, regardless of contribution rank. The agent always knows when they're calling a returning customer.
 
----
+***
 
 ## Repository structure
 
@@ -122,7 +124,7 @@ caller-companion/
 └── render.yaml                # Render deployment configuration
 ```
 
----
+***
 
 ## Run it locally
 
@@ -150,24 +152,24 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
----
+***
 
 ## Honest limitations
 
 This isn't a finished product. A few things worth knowing before evaluating it:
 
 - ⚠️ The model was trained on **2008-2010 Portuguese bank data**. The macroeconomic features (Euribor rate, employment indicators) are doing real predictive work but bind the model to its training era. Re-training on current data from a target vertical is required for real deployment.
-- ⚠️ **Predictive ceiling sits at ROC-AUC 0.80** without the `duration` feature. This was confirmed across four hyperparameter configurations — none improved on the baseline. The signal in the available features is what it is.
+- ⚠️ **Predictive ceiling sits at ROC-AUC 0.80** without the `duration` feature. This was confirmed across four hyperparameter configurations and none improved on the baseline. The signal in the available features is what it is.
 - ⚠️ The talking points translator covers the highest-impact features but **isn't exhaustive**. Some predictions surface generic confidence-band advice when no specific feature translation applies.
 - ⚠️ Low absolute count of high-confidence positive predictions means a real deployment should pair this tool with **fresh-prospect campaigns** to avoid a "rich-get-richer" loop where the same returning customers get over-marketed.
 
----
+***
 
 ## License
 
-MIT — use it, fork it, run it on your own data, ship something better.
+MIT. Use it, fork it, run it on your own data, ship something better.
 
----
+***
 
 <div align="center">
 
