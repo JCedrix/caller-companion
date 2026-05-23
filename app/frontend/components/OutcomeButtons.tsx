@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import confetti from "canvas-confetti";
 import type { OutcomeKind } from "@/lib/api";
 
 type Tone = "positive" | "negative" | "neutral";
@@ -37,6 +38,19 @@ export function OutcomeButtons({
   const handle = async (kind: OutcomeKind) => {
     setSubmitting(true);
     setError(null);
+
+    if (kind === "interested") {
+      confetti({
+        particleCount: 30,
+        spread: 60,
+        origin: { x: 0.5, y: 0 },
+        colors: ["#ff5b4a", "#10b981", "#f59e0b"],
+        gravity: 0.6,
+        ticks: 150,
+        scalar: 0.8,
+      });
+    }
+
     try {
       await onPick(kind);
     } catch (e) {
