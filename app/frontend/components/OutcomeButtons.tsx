@@ -3,14 +3,28 @@
 import { useState } from "react";
 import type { OutcomeKind } from "@/lib/api";
 
-const OUTCOMES: Array<{ key: OutcomeKind; label: string }> = [
-  { key: "no_answer", label: "No Answer" },
-  { key: "voicemail", label: "Voicemail" },
-  { key: "callback", label: "Callback" },
-  { key: "interested", label: "Interested" },
-  { key: "not_now", label: "Not Now" },
-  { key: "dnc", label: "DNC" },
+type Tone = "positive" | "negative" | "neutral";
+
+const OUTCOMES: Array<{ key: OutcomeKind; label: string; tone: Tone }> = [
+  { key: "no_answer", label: "No Answer", tone: "neutral" },
+  { key: "voicemail", label: "Voicemail", tone: "neutral" },
+  { key: "callback", label: "Callback", tone: "neutral" },
+  { key: "interested", label: "Interested", tone: "positive" },
+  { key: "not_now", label: "Not Now", tone: "neutral" },
+  { key: "dnc", label: "DNC", tone: "negative" },
 ];
+
+function buttonClasses(tone: Tone): string {
+  const base =
+    "rounded-xl border border-card-border bg-card transition-all duration-150 ease-cc text-sm py-3 px-5 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed";
+  if (tone === "positive") {
+    return `${base} text-positive hover:bg-positive-tint hover:border-positive`;
+  }
+  if (tone === "negative") {
+    return `${base} text-negative hover:bg-negative-tint hover:border-negative`;
+  }
+  return `${base} text-text-primary hover:border-indigo-bright`;
+}
 
 export function OutcomeButtons({
   onPick,
@@ -39,13 +53,13 @@ export function OutcomeButtons({
         </div>
       )}
       <div className="grid grid-cols-3 gap-3">
-        {OUTCOMES.map(({ key, label }) => (
+        {OUTCOMES.map(({ key, label, tone }) => (
           <button
             key={key}
             type="button"
             disabled={submitting}
             onClick={() => handle(key)}
-            className="rounded-xl border border-card-border bg-card hover:border-indigo-bright transition-all duration-150 ease-cc text-sm text-text-primary py-3 px-5 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+            className={buttonClasses(tone)}
           >
             {label}
           </button>

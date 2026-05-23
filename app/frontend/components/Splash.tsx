@@ -29,7 +29,7 @@ export function Splash() {
   return (
     <BlobBackground>
       <div className={`text-center ease-cc transition-all ${stageClass}`}>
-        <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
+        <h1 className="splash-title text-4xl md:text-5xl font-bold tracking-tight">
           Caller Companion
         </h1>
         <p className="text-text-secondary text-base md:text-lg mt-3">

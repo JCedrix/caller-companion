@@ -35,6 +35,9 @@ export function QueueView() {
   const [error, setError] = useState<string | null>(null);
   const [callState, setCallState] = useState<CallState>("queue");
   const [lastOutcome, setLastOutcome] = useState<OutcomeResponse | null>(null);
+  const [lastAgentOutcome, setLastAgentOutcome] = useState<OutcomeKind | null>(
+    null,
+  );
   const [sessionOutcomes, setSessionOutcomes] = useState<SessionOutcome[]>([]);
 
   useEffect(() => {
@@ -71,6 +74,7 @@ export function QueueView() {
     });
     setSessionOutcomes(getOutcomes(callerId));
     setLastOutcome(res);
+    setLastAgentOutcome(kind);
     setCallState("reveal");
   };
 
@@ -79,6 +83,7 @@ export function QueueView() {
     setCustomers(null);
     setFeaturedIdx(0);
     setLastOutcome(null);
+    setLastAgentOutcome(null);
     setCallState("queue");
     try {
       const res = await fetchQueue(callerId, 20);
@@ -97,6 +102,7 @@ export function QueueView() {
       setFeaturedIdx(0);
     }
     setLastOutcome(null);
+    setLastAgentOutcome(null);
     setCallState("queue");
   };
 
@@ -121,10 +127,11 @@ export function QueueView() {
     );
   }
 
-  if (callState === "reveal" && lastOutcome) {
+  if (callState === "reveal" && lastOutcome && lastAgentOutcome) {
     return (
       <RevealCard
         outcome={lastOutcome}
+        agentOutcome={lastAgentOutcome}
         stats={sessionOutcomes}
         onNext={handleNextCustomer}
         onDone={handleDoneForNow}

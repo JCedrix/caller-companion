@@ -1,17 +1,36 @@
-import type { OutcomeResponse } from "@/lib/api";
+import type { OutcomeKind, OutcomeResponse } from "@/lib/api";
 import type { SessionOutcome } from "@/lib/session";
 
 function labelText(label: 0 | 1): string {
   return label === 1 ? "Subscribed" : "Did not subscribe";
 }
 
+const OUTCOME_LABELS: Record<OutcomeKind, string> = {
+  no_answer: "No Answer",
+  voicemail: "Voicemail",
+  callback: "Callback",
+  interested: "Interested",
+  not_now: "Not Now",
+  dnc: "DNC",
+};
+
+function chipClasses(kind: OutcomeKind): string {
+  const base =
+    "inline-flex items-center px-2.5 py-1 rounded text-xs font-medium";
+  if (kind === "interested") return `${base} bg-positive-tint text-positive`;
+  if (kind === "dnc") return `${base} bg-negative-tint text-negative`;
+  return `${base} bg-white/5 text-text-secondary`;
+}
+
 export function RevealCard({
   outcome,
+  agentOutcome,
   stats,
   onNext,
   onDone,
 }: {
   outcome: OutcomeResponse;
+  agentOutcome: OutcomeKind;
   stats: SessionOutcome[];
   onNext: () => void;
   onDone: () => void;
@@ -49,6 +68,14 @@ export function RevealCard({
             Actual outcome
           </dt>
           <dd className="text-text-primary">{outcome.actual_outcome}</dd>
+          <dt className="text-text-muted text-xs uppercase tracking-wider self-center">
+            You logged
+          </dt>
+          <dd>
+            <span className={chipClasses(agentOutcome)}>
+              {OUTCOME_LABELS[agentOutcome]}
+            </span>
+          </dd>
         </dl>
 
         <p className="mt-8 text-text-secondary text-sm max-w-md mx-auto leading-relaxed">

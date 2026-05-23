@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { IdentityProvider } from "@/components/IdentityProvider";
+import { AmbientBackground } from "@/components/AmbientBackground";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -24,6 +25,7 @@ export default function RootLayout({
     <html lang="en" className={inter.variable}>
       <body className="bg-bg text-text-primary font-sans min-h-screen">
         <IdentityProvider>
+          <AmbientBackground />
           <Header />
           <main className="max-w-content mx-auto px-6 py-10">{children}</main>
         </IdentityProvider>
