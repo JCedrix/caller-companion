@@ -13,6 +13,8 @@ interface IdentityContextValue {
   callerId: string | null;
   mounted: boolean;
   setCaller: (id: string | null) => void;
+  splashDismissed: boolean;
+  dismissSplash: () => void;
 }
 
 const IdentityContext = createContext<IdentityContextValue | null>(null);
@@ -20,6 +22,7 @@ const IdentityContext = createContext<IdentityContextValue | null>(null);
 export function IdentityProvider({ children }: { children: ReactNode }) {
   const [callerId, setCallerId] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [splashDismissed, setSplashDismissed] = useState(false);
 
   useEffect(() => {
     setCallerId(localStorage.getItem(CALLER_KEY));
@@ -35,8 +38,18 @@ export function IdentityProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const dismissSplash = () => setSplashDismissed(true);
+
   return (
-    <IdentityContext.Provider value={{ callerId, mounted, setCaller }}>
+    <IdentityContext.Provider
+      value={{
+        callerId,
+        mounted,
+        setCaller,
+        splashDismissed,
+        dismissSplash,
+      }}
+    >
       {children}
     </IdentityContext.Provider>
   );

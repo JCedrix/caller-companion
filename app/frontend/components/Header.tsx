@@ -4,21 +4,21 @@ import { getCallerById } from "@/lib/callers";
 import { useIdentity } from "./IdentityProvider";
 
 export function Header() {
-  const { callerId, mounted, setCaller } = useIdentity();
+  const { callerId, mounted, setCaller, splashDismissed } = useIdentity();
+
+  if (!mounted) return null;
+  if (!splashDismissed) return null;
+
   const caller = getCallerById(callerId);
 
   return (
-    <header className="border-b border-card-border">
+    <header className="border-b border-card-border animate-fade-in">
       <div className="max-w-content mx-auto px-6 py-5 flex items-center justify-between">
         <div className="text-base font-semibold tracking-tight">
           Caller Companion
         </div>
-        <div
-          className={`text-sm transition-opacity duration-200 ease-cc ${
-            mounted ? "opacity-100" : "opacity-0"
-          }`}
-        >
-          {mounted && caller && (
+        <div className="text-sm">
+          {caller ? (
             <div className="flex items-center gap-3">
               <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-indigo-tint text-indigo font-semibold text-xs">
                 {caller.initials}
@@ -32,8 +32,7 @@ export function Header() {
                 switch
               </button>
             </div>
-          )}
-          {mounted && !caller && (
+          ) : (
             <span className="text-text-muted">no caller selected</span>
           )}
         </div>

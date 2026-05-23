@@ -51,9 +51,14 @@ const config: Config = {
           "0%": { opacity: "0" },
           "100%": { opacity: "1" },
         },
+        "fade-up": {
+          "0%": { opacity: "0", transform: "translateY(8px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
       },
       animation: {
         "fade-in": "fade-in 200ms cubic-bezier(0.16, 1, 0.3, 1)",
+        "fade-up": "fade-up 600ms cubic-bezier(0.16, 1, 0.3, 1)",
       },
     },
   },
