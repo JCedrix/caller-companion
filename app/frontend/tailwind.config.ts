@@ -20,6 +20,14 @@ const config: Config = {
           DEFAULT: "#f59e0b",
           tint: "rgba(245, 158, 11, 0.12)",
         },
+        positive: {
+          DEFAULT: "#10b981",
+          tint: "rgba(16, 185, 129, 0.12)",
+        },
+        negative: {
+          DEFAULT: "#dc2626",
+          tint: "rgba(220, 38, 38, 0.12)",
+        },
         "text-primary": "rgba(255, 255, 255, 0.95)",
         "text-secondary": "rgba(255, 255, 255, 0.6)",
         "text-muted": "rgba(255, 255, 255, 0.45)",
