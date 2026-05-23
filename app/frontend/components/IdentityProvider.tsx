@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import { CALLER_KEY } from "@/lib/callers";
+import { clearOutcomes } from "@/lib/session";
 
 interface IdentityContextValue {
   callerId: string | null;
@@ -15,6 +16,10 @@ interface IdentityContextValue {
   setCaller: (id: string | null) => void;
   splashDismissed: boolean;
   dismissSplash: () => void;
+  inShiftSummary: boolean;
+  openShiftSummary: () => void;
+  resumeShift: () => void;
+  endShift: () => void;
 }
 
 const IdentityContext = createContext<IdentityContextValue | null>(null);
@@ -23,6 +28,7 @@ export function IdentityProvider({ children }: { children: ReactNode }) {
   const [callerId, setCallerId] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const [splashDismissed, setSplashDismissed] = useState(false);
+  const [inShiftSummary, setInShiftSummary] = useState(false);
 
   useEffect(() => {
     setCallerId(localStorage.getItem(CALLER_KEY));
@@ -39,6 +45,16 @@ export function IdentityProvider({ children }: { children: ReactNode }) {
   };
 
   const dismissSplash = () => setSplashDismissed(true);
+  const openShiftSummary = () => setInShiftSummary(true);
+  const resumeShift = () => setInShiftSummary(false);
+
+  const endShift = () => {
+    const id = callerId;
+    if (id) clearOutcomes(id);
+    setCaller(null);
+    setInShiftSummary(false);
+    setSplashDismissed(false);
+  };
 
   return (
     <IdentityContext.Provider
@@ -48,6 +64,10 @@ export function IdentityProvider({ children }: { children: ReactNode }) {
         setCaller,
         splashDismissed,
         dismissSplash,
+        inShiftSummary,
+        openShiftSummary,
+        resumeShift,
+        endShift,
       }}
     >
       {children}

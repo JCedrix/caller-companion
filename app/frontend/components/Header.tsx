@@ -4,10 +4,18 @@ import { getCallerById } from "@/lib/callers";
 import { useIdentity } from "./IdentityProvider";
 
 export function Header() {
-  const { callerId, mounted, setCaller, splashDismissed } = useIdentity();
+  const {
+    callerId,
+    mounted,
+    setCaller,
+    splashDismissed,
+    inShiftSummary,
+    openShiftSummary,
+  } = useIdentity();
 
   if (!mounted) return null;
   if (!splashDismissed) return null;
+  if (inShiftSummary) return null;
 
   const caller = getCallerById(callerId);
 
@@ -30,6 +38,13 @@ export function Header() {
                 className="text-text-muted hover:text-indigo transition-colors duration-200 ease-cc text-xs"
               >
                 switch
+              </button>
+              <button
+                type="button"
+                onClick={openShiftSummary}
+                className="text-text-muted hover:text-negative transition-colors duration-200 ease-cc text-xs"
+              >
+                end shift
               </button>
             </div>
           ) : (

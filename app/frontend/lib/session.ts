@@ -37,3 +37,9 @@ export function appendOutcome(callerId: string, outcome: SessionOutcome): void {
   store[callerId] = [...existing, outcome];
   write(store);
 }
+
+export function clearOutcomes(callerId: string): void {
+  const store = read();
+  delete store[callerId];
+  write(store);
+}
